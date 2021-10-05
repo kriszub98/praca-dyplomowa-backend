@@ -1,0 +1,23 @@
+{
+	"name": "appsik-backend",
+	"version": "1.0.0",
+	"description": "Backend for appsik application created using NodeJS and Mongo",
+	"main": "index.js",
+	"scripts": {
+		"dev": "nodemon src/index.js",
+		"start_mongo": "C:/users/KrisLaptop/mongodb/bin/mongod.exe --dbpath=C:/Users/KrisLaptop/mongodb-data",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Krzysztof Zubrzycki",
+	"license": "ISC",
+	"dependencies": {
+		"bcryptjs": "^2.4.3",
+		"express": "^4.17.1",
+		"jsonwebtoken": "^8.5.1",
+		"mongodb": "^4.1.2",
+		"mongoose": "^6.0.9"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.13"
+	}
+}
