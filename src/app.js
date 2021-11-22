@@ -7,6 +7,7 @@ const errorMiddleware = require('./middleware/error-handler');
 
 // Routers
 const allergyRouter = require('./routes/allergy');
+const userRouter = require('./routes/user');
 
 app.use(express.json());
 
@@ -15,6 +16,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/v1/allergies', allergyRouter);
+app.use('/api/v1/users', userRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
