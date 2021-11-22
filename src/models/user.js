@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		trim: true,
 		minLength: 8
+	},
+	email: {
+		type: String,
+		required: true,
+		trim: true
 	},
 	tokens: [
 		{
