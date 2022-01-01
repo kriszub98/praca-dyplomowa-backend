@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const User = require('../../src/models/user');
 const Allergy = require('../../src/models/allergy');
+const Product = require('../../src/models/product');
 
 const userOneId = new mongoose.Types.ObjectId();
 const userOne = {
@@ -45,10 +46,29 @@ const allergyThree = {
 	name: 'Third allergy'
 };
 
+const productOneId = new mongoose.Types.ObjectId();
+const productOne = {
+	_id: productOneId,
+	name: 'Product One',
+	description: 'Product One Description',
+	owner: userOne,
+	allergies: [ allergyOne, allergyTwo ]
+};
+
+const productTwoId = new mongoose.Types.ObjectId();
+const productTwo = {
+	_id: productTwoId,
+	name: 'Product Two',
+	description: 'Product Two Description',
+	owner: userOne,
+	allergies: [ allergyTwo ]
+};
+
 const setupDatabase = async () => {
 	// Clean test DB
 	await User.deleteMany();
 	await Allergy.deleteMany();
+	await Product.deleteMany();
 
 	// Save Data
 	await new User(userOne).save();
@@ -57,6 +77,9 @@ const setupDatabase = async () => {
 	await new Allergy(allergyOne).save();
 	await new Allergy(allergyTwo).save();
 	await new Allergy(allergyThree).save();
+
+	await new Product(productOne).save();
+	await new Product(productTwo).save();
 };
 
 module.exports = {
@@ -65,5 +88,9 @@ module.exports = {
 	userTwo,
 	allergyOne,
 	allergyOneId,
+	allergyTwo,
+	productOne,
+	productOneId,
+	productTwo,
 	setupDatabase
 };

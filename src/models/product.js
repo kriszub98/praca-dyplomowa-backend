@@ -14,10 +14,6 @@ const productSchema = new mongoose.Schema(
 		photo: {
 			type: Buffer
 		},
-		isValidated: {
-			type: Boolean,
-			default: false
-		},
 		validatedBy: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User'
@@ -29,11 +25,9 @@ const productSchema = new mongoose.Schema(
 		},
 		allergies: [
 			{
-				allergy: {
-					type: mongoose.Schema.Types.ObjectId,
-					required: true,
-					ref: 'Allergy'
-				}
+				type: mongoose.Schema.Types.ObjectId,
+				required: true,
+				ref: 'Allergy'
 			}
 		]
 	},
