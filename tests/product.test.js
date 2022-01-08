@@ -1,5 +1,4 @@
 const request = require('supertest');
-const mongoose = require('mongoose');
 const app = require('../src/app');
 const connectDB = require('../src/db/connect');
 const Product = require('../src/models/product');
@@ -92,6 +91,24 @@ test("Shouldn't update product if user is not logged in", async () => {
 			name: 'Invalid Update'
 		})
 		.expect(401);
+});
+
+//TODO: Should update allergies!
+
+test('Should update product', async () => {
+	await request(app)
+		.patch(`/api/v1/products/${productOneId}`)
+		.set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+		.send({
+			name: 'Field Updated'
+		})
+		.expect(200);
+
+	// Check if record changed
+	const updatedProduct = await Product.findById(productOneId);
+	expect(updatedProduct).toMatchObject({
+		name: 'Field Updated'
+	});
 });
 
 test("Shouldn't remove product if it doesn't exist. Should return 404", async () => {

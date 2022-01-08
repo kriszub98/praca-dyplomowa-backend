@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const User = require('../../src/models/user');
 const Allergy = require('../../src/models/allergy');
 const Product = require('../../src/models/product');
+const Recipe = require('../../src/models/recipe');
 
 const userOneId = new mongoose.Types.ObjectId();
 const userOne = {
@@ -64,11 +65,45 @@ const productTwo = {
 	allergies: [ allergyTwo ]
 };
 
+const recipeOneId = new mongoose.Types.ObjectId();
+const recipeOne = {
+	_id: recipeOneId,
+	name: 'Recipe One',
+	description: 'Recipe One Description',
+	preparation: [ 'Step 1: Description here', 'Step 2: Description here' ],
+	owner: userOne,
+	products: [
+		{
+			product: productOne,
+			amount: '100 units'
+		}
+	]
+};
+
+const recipeTwo = {
+	_id: new mongoose.Types.ObjectId(),
+	name: 'Recipe Two',
+	description: 'Recipe Two Description',
+	preparation: [ 'Step 1: Description here', 'Step 2: Description here' ],
+	owner: userTwo,
+	products: [
+		{
+			product: productOne,
+			amount: '101 kilos'
+		},
+		{
+			product: productTwo,
+			amount: '100 units'
+		}
+	]
+};
+
 const setupDatabase = async () => {
 	// Clean test DB
 	await User.deleteMany();
 	await Allergy.deleteMany();
 	await Product.deleteMany();
+	await Recipe.deleteMany();
 
 	// Save Data
 	await new User(userOne).save();
@@ -80,6 +115,9 @@ const setupDatabase = async () => {
 
 	await new Product(productOne).save();
 	await new Product(productTwo).save();
+
+	await new Recipe(recipeOne).save();
+	await new Recipe(recipeTwo).save();
 };
 
 module.exports = {
@@ -92,5 +130,8 @@ module.exports = {
 	productOne,
 	productOneId,
 	productTwo,
+	recipeOne,
+	recipeOneId,
+	recipeTwo,
 	setupDatabase
 };

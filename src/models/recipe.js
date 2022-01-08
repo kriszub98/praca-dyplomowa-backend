@@ -37,7 +37,7 @@ const recipeSchema = new mongoose.Schema(
 					ref: 'Product'
 				},
 				amount: {
-					type: Number,
+					type: String,
 					required: true
 				}
 			}

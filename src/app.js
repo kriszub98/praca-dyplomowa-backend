@@ -9,6 +9,7 @@ const errorMiddleware = require('./middleware/error-handler');
 const allergyRouter = require('./routes/allergy');
 const userRouter = require('./routes/user');
 const productRouter = require('./routes/product');
+const recipeRouter = require('./routes/recipe');
 
 app.use(express.json());
 
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/allergies', allergyRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/products', productRouter);
+app.use('/api/v1/recipes', recipeRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
