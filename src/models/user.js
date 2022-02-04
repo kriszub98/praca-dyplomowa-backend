@@ -32,6 +32,30 @@ const userSchema = new mongoose.Schema({
 			}
 		}
 	},
+	pwz: {
+		type: String,
+		required: false,
+		trim: true
+	},
+	isAdmin: {
+		type: Boolean,
+		required: false,
+		default: false
+	},
+	allergies: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			required: true,
+			ref: 'Allergy'
+		}
+	],
+	favouriteRecipes: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			required: true,
+			ref: 'Recipe'
+		}
+	],
 	tokens: [
 		{
 			token: {
@@ -42,12 +66,18 @@ const userSchema = new mongoose.Schema({
 	]
 });
 
+userSchema.virtual('isDoctor').get(function() {
+	return this.pwz ? true : false;
+});
+
 userSchema.methods.toJSON = function() {
 	const user = this;
-	const userObject = user.toObject();
+	const userObject = user.toObject({ virtuals: true });
 
 	delete userObject.password;
 	delete userObject.tokens;
+	delete userObject.pwz;
+	delete userObject.id;
 
 	return userObject;
 };
@@ -92,4 +122,5 @@ const User = mongoose.model('User', userSchema);
 
 module.exports = User;
 
-// TODO: BLOCKED & FAVS DISHES
+// TODO: TESTS
+// TODO: Allergies should not be visible to everyone

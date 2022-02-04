@@ -5,6 +5,34 @@ const Allergy = require('../../src/models/allergy');
 const Product = require('../../src/models/product');
 const Recipe = require('../../src/models/recipe');
 
+const adminOneId = new mongoose.Types.ObjectId();
+const adminOne = {
+	_id: adminOneId,
+	isAdmin: true,
+	login: 'adminOne',
+	email: 'adminOne@gmail.com',
+	password: '56what!!',
+	tokens: [
+		{
+			token: jwt.sign({ _id: adminOneId }, process.env.JWT_SECRET)
+		}
+	]
+};
+
+const doctorOneId = new mongoose.Types.ObjectId();
+const doctorOne = {
+	_id: doctorOneId,
+	pwz: 'TESTPWZ',
+	login: 'doctorOne',
+	email: 'doctorOne@gmail.com',
+	password: '56what!!',
+	tokens: [
+		{
+			token: jwt.sign({ _id: doctorOneId }, process.env.JWT_SECRET)
+		}
+	]
+};
+
 const userOneId = new mongoose.Types.ObjectId();
 const userOne = {
 	_id: userOneId,
@@ -98,6 +126,20 @@ const recipeTwo = {
 	]
 };
 
+const userThreeId = new mongoose.Types.ObjectId();
+const userThree = {
+	_id: userThreeId,
+	login: 'UserThree',
+	email: 'uThree@gmail.com',
+	password: '56what!!',
+	tokens: [
+		{
+			token: jwt.sign({ _id: userThreeId }, process.env.JWT_SECRET)
+		}
+	],
+	allergies: [ allergyOne, allergyTwo ]
+};
+
 const setupDatabase = async () => {
 	// Clean test DB
 	await User.deleteMany();
@@ -108,6 +150,9 @@ const setupDatabase = async () => {
 	// Save Data
 	await new User(userOne).save();
 	await new User(userTwo).save();
+	await new User(userThree).save();
+	await new User(adminOne).save();
+	await new User(doctorOne).save();
 
 	await new Allergy(allergyOne).save();
 	await new Allergy(allergyTwo).save();
@@ -121,6 +166,10 @@ const setupDatabase = async () => {
 };
 
 module.exports = {
+	adminOne,
+	adminOneId,
+	doctorOne,
+	doctorOneId,
 	userOneId,
 	userOne,
 	userTwo,
