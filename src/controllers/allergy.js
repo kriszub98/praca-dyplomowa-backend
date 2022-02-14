@@ -2,7 +2,7 @@ const Allergy = require('../models/allergy');
 
 const getAllAllergies = async (req, res) => {
 	const allergies = await Allergy.find({});
-	return res.status(200).json({ allergies });
+	return res.status(200).json(allergies);
 };
 
 const getAllergy = async (req, res) => {
@@ -20,7 +20,7 @@ const addAllergy = async (req, res) => {
 		return res.status(201).json({ allergy });
 	} catch (error) {
 		if (error.code === 11000) {
-			return res.status(400).json({ error: 'Record already exist' });
+			return res.status(400).json({ error: 'Alergia już istnieje' });
 		}
 	}
 };

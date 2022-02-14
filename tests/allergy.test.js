@@ -9,7 +9,7 @@ beforeEach(setupDatabase);
 
 test('Should fetch 3 allergies', async () => {
 	const response = await request(app).get('/api/v1/allergies').send().expect(200);
-	expect(response.body.allergies.length).toBe(3);
+	expect(response.body.length).toBe(3);
 });
 
 test('Should return allergy with the name of first allergy', async () => {
@@ -49,7 +49,7 @@ test("Shouldn't add allergy with existing name", async () => {
 		.expect(400);
 
 	// Check for valid error message
-	expect(response.body.error).toBe('Record already exist');
+	expect(response.body.error).toBe('Alergia już istnieje');
 });
 
 test('Should edit allergy with correct data and id', async () => {
