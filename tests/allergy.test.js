@@ -26,7 +26,8 @@ test('Should add new allergy', async () => {
 	const response = await request(app)
 		.post('/api/v1/allergies')
 		.send({
-			name: 'Brzoza'
+			name: 'Nabiał',
+			shortName: 'NAB'
 		})
 		.expect(201);
 
@@ -36,7 +37,8 @@ test('Should add new allergy', async () => {
 
 	// Assert allergy data is correct(name is lowercase and name matches pattern)
 	expect(allergy).toMatchObject({
-		name: 'brzoza'
+		name: 'nabiał',
+		shortName: 'NAB'
 	});
 });
 
@@ -44,7 +46,8 @@ test("Shouldn't add allergy with existing name", async () => {
 	const response = await request(app)
 		.post('/api/v1/allergies')
 		.send({
-			name: 'first allergy'
+			name: 'first allergy',
+			shortName: 'fal'
 		})
 		.expect(400);
 

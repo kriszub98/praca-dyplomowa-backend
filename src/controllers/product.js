@@ -1,8 +1,8 @@
 const Product = require('../models/product');
 
 const getAllProducts = async (req, res) => {
-	const products = await Product.find({});
-	return res.status(200).json({ products });
+	const products = await Product.find({}).populate('allergies').populate({ path: 'owner', select: 'login' }).exec();
+	return res.status(200).json(products);
 };
 
 const addProduct = async (req, res) => {

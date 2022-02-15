@@ -62,17 +62,20 @@ const userTwo = {
 const allergyOneId = new mongoose.Types.ObjectId();
 const allergyOne = {
 	_id: allergyOneId,
-	name: 'first allergy'
+	name: 'first allergy',
+	shortName: '1AL'
 };
 
 const allergyTwo = {
 	_id: new mongoose.Types.ObjectId(),
-	name: 'Second allergy'
+	name: 'Second allergy',
+	shortName: '2AL'
 };
 
 const allergyThree = {
 	_id: new mongoose.Types.ObjectId(),
-	name: 'Third allergy'
+	name: 'Third allergy',
+	shortName: '3AL'
 };
 
 const productOneId = new mongoose.Types.ObjectId();

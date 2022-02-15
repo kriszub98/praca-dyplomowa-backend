@@ -15,7 +15,7 @@ const getAllergy = async (req, res) => {
 
 const addAllergy = async (req, res) => {
 	try {
-		const allergy = new Allergy({ name: req.body.name });
+		const allergy = new Allergy({ name: req.body.name, shortName: req.body.shortName });
 		await allergy.save();
 		return res.status(201).json({ allergy });
 	} catch (error) {

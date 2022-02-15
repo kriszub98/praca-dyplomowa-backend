@@ -7,6 +7,13 @@ const allergySchema = new mongoose.Schema({
 		lowercase: true,
 		trim: true,
 		unique: true
+	},
+	shortName: {
+		type: String,
+		required: true,
+		uppercase: true,
+		trim: true,
+		unique: true
 	}
 });
 
