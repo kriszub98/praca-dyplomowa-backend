@@ -27,7 +27,7 @@ test('Should add new allergy', async () => {
 		.post('/api/v1/allergies')
 		.send({
 			name: 'Nabiał',
-			shortName: 'NAB'
+			shortName: 'NaB'
 		})
 		.expect(201);
 
@@ -38,7 +38,7 @@ test('Should add new allergy', async () => {
 	// Assert allergy data is correct(name is lowercase and name matches pattern)
 	expect(allergy).toMatchObject({
 		name: 'nabiał',
-		shortName: 'NAB'
+		shortName: 'NaB'
 	});
 });
 
