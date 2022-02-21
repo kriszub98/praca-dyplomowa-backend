@@ -23,7 +23,9 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-	const user = await User.findByCredentials(req.body.email, req.body.password);
+	let { email, password } = req.body;
+	email = email.toLowerCase();
+	const user = await User.findByCredentials(email, password);
 	const token = await user.generateAuthToken();
 	return res.status(200).json({ user, token });
 };
