@@ -64,7 +64,7 @@ test("Shouldn't update product if it doesn't exist", async () => {
 
 	// Check if response contains showable error
 	expect(response.body).toMatchObject({
-		error: 'Product with that id does not exist'
+		error: 'Produkt z tym id nie istnieje'
 	});
 });
 
@@ -80,7 +80,7 @@ test("Shouldn't update product if updates are incorrect", async () => {
 
 	// Check if response contains showable error
 	expect(response.body).toMatchObject({
-		error: 'Invalid updates!'
+		error: 'Podano niepoprawne dane'
 	});
 });
 
@@ -119,7 +119,7 @@ test("Shouldn't remove product if it doesn't exist. Should return 404", async ()
 
 	// Check if response contains showable error
 	expect(response.body).toMatchObject({
-		error: 'Product with that id does not exist'
+		error: 'Produkt z tym id nie istnieje'
 	});
 });
 
@@ -131,7 +131,7 @@ test("Shouldn't remove product if logged user is not owner of the product", asyn
 
 	// Check if response contains showable error
 	expect(response.body).toMatchObject({
-		error: 'Only owner can remove that product'
+		error: 'Tylko właściciel lub administrator może usunąć produkt'
 	});
 });
 
@@ -142,7 +142,7 @@ test('Should remove product', async () => {
 		.expect(200);
 
 	// Check if response contains showable message
-	expect(response.body).toMatchObject({ message: 'Successfully removed' });
+	expect(response.body).toMatchObject({ message: 'Usunięto pomyślnie' });
 
 	// Check if product was removed
 	const product = await Product.findById(productOneId);
@@ -157,7 +157,7 @@ test("Shouldn't verify product if it doesn't exist. Should return 404", async ()
 
 	// Check if response contains showable error
 	expect(response.body).toMatchObject({
-		error: 'Product with that id does not exist'
+		error: 'Produkt z tym id nie istnieje'
 	});
 });
 
@@ -170,7 +170,7 @@ test('Should verify the product', async () => {
 		.expect(200);
 
 	// Check if response contains showable message
-	expect(response.body).toMatchObject({ message: 'Successfully verified' });
+	expect(response.body).toMatchObject({ message: 'Weryfikacja zapisana' });
 
 	// Check if product was validated
 	const product = await Product.findById(productOneId);

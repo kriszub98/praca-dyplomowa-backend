@@ -8,7 +8,7 @@ const getAllRecipes = async (req, res) => {
 const getRecipe = async (req, res) => {
 	const recipe = await Recipe.findById(req.params.id);
 	if (!recipe) {
-		return res.status(404).json({ error: 'Recipe with that id does not exist' });
+		return res.status(404).json({ error: 'Brak przepisu z tym id' });
 	}
 
 	return res.status(200).json(recipe);
@@ -26,13 +26,13 @@ const editRecipe = async (req, res) => {
 	const allowedUpdates = [ 'name', 'description', 'photo', 'preparation', 'products' ];
 	const isValidUpdate = updates.every((update) => allowedUpdates.includes(update));
 
-	if (!isValidUpdate) return res.status(400).json({ error: 'Invalid updates!' });
+	if (!isValidUpdate) return res.status(400).json({ error: 'Podano niepoprawne dane!' });
 
 	const recipe = await Recipe.findById(req.params.id);
 
 	// Check if recipe exists
 	if (!recipe) {
-		return res.status(404).json({ error: 'Recipe with that id does not exist' });
+		return res.status(404).json({ error: 'Brak przepisu z tym id' });
 	}
 
 	// Apply Changes
@@ -47,24 +47,24 @@ const deleteRecipe = async (req, res) => {
 
 	// Check if recipe exists
 	if (!recipe) {
-		return res.status(404).json({ error: 'Recipe with that id does not exist' });
+		return res.status(404).json({ error: 'Brak przepisu z tym id' });
 	}
 
 	// Check if user is permited to remove recipe
 	// TODO: Or if user is Admin || Doctor
 	if (!recipe.owner.equals(req.user._id)) {
-		return res.status(401).json({ error: 'Only owner can remove that recipe' });
+		return res.status(401).json({ error: 'Tylko autor lub administrator może usunąć przepis' });
 	}
 
 	// Remove recipe
 	await Recipe.deleteOne(recipe);
 
-	return res.status(200).send({ message: 'Successfully removed' });
+	return res.status(200).send({ message: 'Usunięto pomyślnie' });
 };
 
 const verifyRecipe = async (req, res) => {};
 
-// const deleteProduct = async (req, res) => {
+// TODO: SPRAWDZ TE KOMENTY?! const deleteProduct = async (req, res) => {
 // 	const product = await Product.findById(req.params.id);
 
 // 	// Check if product exists

@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 
 const getAllProducts = async (req, res) => {
-	const products = await Product.find({}).populate('allergies').populate({ path: 'owner', select: 'login' }).exec();
+	const products = await Product.find({});
 	return res.status(200).json(products);
 };
 
@@ -17,13 +17,13 @@ const editProduct = async (req, res) => {
 	const allowedUpdates = [ 'name', 'description', 'photo' ];
 	const isValidUpdate = updates.every((update) => allowedUpdates.includes(update));
 
-	if (!isValidUpdate) return res.status(400).json({ error: 'Invalid updates!' });
+	if (!isValidUpdate) return res.status(400).json({ error: 'Podano niepoprawne dane' });
 
 	const product = await Product.findById(req.params.id);
 
 	// Check if product exists
 	if (!product) {
-		return res.status(404).json({ error: 'Product with that id does not exist' });
+		return res.status(404).json({ error: 'Produkt z tym id nie istnieje' });
 	}
 
 	// Apply Changes
@@ -38,25 +38,25 @@ const deleteProduct = async (req, res) => {
 
 	// Check if product exists
 	if (!product) {
-		return res.status(404).json({ error: 'Product with that id does not exist' });
+		return res.status(404).json({ error: 'Produkt z tym id nie istnieje' });
 	}
 
 	// Check if user is permited to remove product
 	// TODO: Or if user is Admin || Doctor
 	if (!product.owner.equals(req.user._id)) {
-		return res.status(401).json({ error: 'Only owner can remove that product' });
+		return res.status(401).json({ error: 'Tylko właściciel lub administrator może usunąć produkt' });
 	}
 
 	// Remove product
 	await Product.deleteOne(product);
 
-	return res.status(200).send({ message: 'Successfully removed' });
+	return res.status(200).send({ message: 'Usunięto pomyślnie' });
 };
 
 const getProduct = async (req, res) => {
 	const product = await Product.findById(req.params.id);
 	if (!product) {
-		return res.status(404).json({ error: 'Product with that id does not exist' });
+		return res.status(404).json({ error: 'Produkt z tym id nie istnieje' });
 	}
 	return res.status(200).json({ product });
 };
@@ -66,7 +66,7 @@ const verifyProduct = async (req, res) => {
 
 	// Check if product exists
 	if (!product) {
-		return res.status(404).json({ error: 'Product with that id does not exist' });
+		return res.status(404).json({ error: 'Produkt z tym id nie istnieje' });
 	}
 
 	// TODO: Check if user is Admin || Doctor
@@ -76,7 +76,7 @@ const verifyProduct = async (req, res) => {
 	product.validatedBy = req.user;
 	await product.save();
 
-	return res.status(200).send({ message: 'Successfully verified' });
+	return res.status(200).send({ message: 'Weryfikacja zapisana' });
 };
 
 module.exports = {

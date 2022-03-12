@@ -34,7 +34,7 @@ test("Shouldn't return recipe if it doens't exist. Should return 404", async () 
 	const response = await request(app).get(`/api/v1/recipes/000000000000000000000000`).send().expect(404);
 
 	//Check if response contains error message
-	expect(response.body).toMatchObject({ error: 'Recipe with that id does not exist' });
+	expect(response.body).toMatchObject({ error: 'Brak przepisu z tym id' });
 });
 
 test('Should return recipe one', async () => {
@@ -95,7 +95,7 @@ test("Shouldn't update recipe if it doesn't exist", async () => {
 
 	// Check if response contains showable error
 	expect(response.body).toMatchObject({
-		error: 'Recipe with that id does not exist'
+		error: 'Brak przepisu z tym id'
 	});
 });
 
@@ -111,7 +111,7 @@ test("Shouldn't update recipe if updates are incorrect", async () => {
 
 	// Check if response contains showable error
 	expect(response.body).toMatchObject({
-		error: 'Invalid updates!'
+		error: 'Podano niepoprawne dane!'
 	});
 });
 
@@ -171,7 +171,7 @@ test("Shouldn't remove recipe if it doesn't exist. Should return 404", async () 
 
 	// Check if response contains showable error
 	expect(response.body).toMatchObject({
-		error: 'Recipe with that id does not exist'
+		error: 'Brak przepisu z tym id'
 	});
 });
 
@@ -182,7 +182,7 @@ test('Should remove recipe', async () => {
 		.expect(200);
 
 	// Check if response contains showable message
-	expect(response.body).toMatchObject({ message: 'Successfully removed' });
+	expect(response.body).toMatchObject({ message: 'Usunięto pomyślnie' });
 
 	// Check if product was removed
 	const recipe = await Recipe.findById(recipeOneId);

@@ -36,6 +36,16 @@ const productSchema = new mongoose.Schema(
 	}
 );
 
+productSchema.pre('find', function() {
+	let product = this;
+	product.populate({ path: 'allergies' }).populate({ path: 'owner', select: 'login' });
+});
+
+productSchema.pre('findOne', function() {
+	let product = this;
+	product.populate({ path: 'allergies' }).populate({ path: 'owner', select: 'login' });
+});
+
 const Product = mongoose.model('Product', productSchema);
 
 module.exports = Product;

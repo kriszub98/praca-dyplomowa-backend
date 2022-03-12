@@ -9,7 +9,7 @@ const getAllUsers = async (req, res) => {
 const getUserById = async (req, res) => {
 	const user = await User.findById(req.params.id);
 	if (!user) {
-		return res.status(404).json({ error: 'No user with that id' });
+		return res.status(404).json({ error: 'Brak użytkownika z tym id.' });
 	}
 	return res.status(200).json({ user });
 };
@@ -36,20 +36,20 @@ const logout = async (req, res) => {
 	});
 	await req.user.save();
 
-	return res.status(200).json({ message: 'Logout successful' });
+	return res.status(200).json({ message: 'Wylogowano pomyślnie' });
 };
 
 const logoutAll = async (req, res) => {
 	req.user.tokens = [];
 	await req.user.save();
-	return res.status(200).json({ message: 'Logout successful' });
+	return res.status(200).json({ message: 'Wylogowano pomyślnie' });
 };
 
 // TODO: Tylko admin
 const deleteUser = async (req, res) => {
 	const user = await User.findOneAndDelete({ _id: req.params.id });
 	if (!user) {
-		return res.status(404).json({ error: 'No user with that id' });
+		return res.status(404).json({ error: 'Brak użytkownika z tym id.' });
 	}
 
 	return res.status(200).json({ user });
@@ -58,7 +58,7 @@ const deleteUser = async (req, res) => {
 const deleteMyAccount = async (req, res) => {
 	const user = await User.findOneAndDelete({ _id: req.params.id });
 	if (!user) {
-		return res.status(404).json({ error: 'No user with that id' });
+		return res.status(404).json({ error: 'Brak użytkownika z tym id.' });
 	}
 
 	return res.status(200).json({ user });
@@ -74,7 +74,7 @@ const editMyAccount = async (req, res) => {
 	const allowedUpdates = [ 'login', 'email', 'password' ];
 	const isValidUpdate = updates.every((update) => allowedUpdates.includes(update));
 
-	if (!isValidUpdate) return res.status(400).json({ error: 'Invalid updates!' });
+	if (!isValidUpdate) return res.status(400).json({ error: 'Podano niepoprawne wartości!' });
 
 	updates.forEach((update) => (req.user[update] = req.body[update]));
 
