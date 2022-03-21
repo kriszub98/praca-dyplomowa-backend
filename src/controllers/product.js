@@ -1,7 +1,31 @@
 const Product = require('../models/product');
 
 const getAllProducts = async (req, res) => {
-	const products = await Product.find({});
+	const { name, sort, fields } = req.query;
+	let queryObject = {};
+
+	// Filtering
+	if (name) {
+		queryObject.name = { $regex: name, $options: 'i' };
+	}
+	let result = Product.find(queryObject);
+
+	// Sorting
+	if (sort) {
+		const sortList = sort.split(',').join(' ');
+		result = result.sort(sortList);
+	} else {
+		result = result.sort('createdAt');
+	}
+
+	// Choosing fields
+	if (fields) {
+		const fieldsList = fields.split(',').join(' ');
+		result = result.select(fieldsList);
+	}
+
+	const products = await result;
+
 	return res.status(200).json(products);
 };
 
