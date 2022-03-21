@@ -1,7 +1,31 @@
 const Recipe = require('../models/recipe');
 
 const getAllRecipes = async (req, res) => {
-	const recipes = await Recipe.find({});
+	const { name, sort, fields } = req.query;
+	let queryObject = {};
+
+	// Filtering
+	if (name) {
+		queryObject.name = { $regex: name, $options: 'i' };
+	}
+	let result = Recipe.find(queryObject);
+
+	// Sorting
+	if (sort) {
+		const sortList = sort.split(',').join(' ');
+		result = result.sort(sortList);
+	} else {
+		result = result.sort('createdAt');
+	}
+
+	// Fields
+	if (fields) {
+		const fieldsList = fields.split(',').join(' ');
+		result.select(fieldsList);
+	}
+
+	const recipes = await result;
+
 	return res.status(200).json(recipes);
 };
 
