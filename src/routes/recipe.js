@@ -8,10 +8,12 @@ const {
 	editRecipe,
 	deleteRecipe,
 	getRecipe,
-	verifyRecipe
+	verifyRecipe,
+	getFavouriteRecipes
 } = require('../controllers/recipe');
 
 router.route('/').get(getAllRecipes).post(auth, addRecipe);
+router.route('/favourites').get(auth, getFavouriteRecipes);
 router.route('/verify/:id').patch(auth, verifyRecipe);
 router.route('/:id').get(getRecipe).delete(auth, deleteRecipe).patch(auth, editRecipe);
 
