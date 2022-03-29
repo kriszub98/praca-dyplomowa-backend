@@ -127,6 +127,19 @@ const getFavouriteRecipes = async (req, res) => {
 	return res.status(200).json(req.user);
 };
 
+const addToFavourite = async () => {
+	const recipe = await Recipe.findById(req.params.id);
+
+	// Check if recipe exists
+	if (!recipe) {
+		return res.status(404).json({ error: 'Brak przepisu z tym id' });
+	}
+	req.user.favouriteRecipes.push(recipe);
+
+	await req.user.save();
+	return res.status(200).json(req.user);
+};
+
 module.exports = {
 	getAllRecipes,
 	getRecipe,

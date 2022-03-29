@@ -71,7 +71,7 @@ const myAccount = async (req, res) => {
 const editMyAccount = async (req, res) => {
 	// Validate updating fields
 	const updates = Object.keys(req.body);
-	const allowedUpdates = [ 'login', 'email', 'password' ];
+	const allowedUpdates = [ 'login', 'email', 'password', 'allergies' ];
 	const isValidUpdate = updates.every((update) => allowedUpdates.includes(update));
 
 	if (!isValidUpdate) return res.status(400).json({ error: 'Podano niepoprawne wartości!' });
