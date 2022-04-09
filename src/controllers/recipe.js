@@ -328,6 +328,41 @@ const deleteComment = async (req, res) => {
 	return res.status(200).json(recipe);
 };
 
+const addRating = async (req, res) => {
+	// Route is: POST /recipes/ratings
+	// I get: {recipeId, score} i user z autha
+	// Comment is {score, author}
+	// TODO: Nie można 2 razy przez tego samego usera
+
+	const { recipeId, score } = req.body;
+	if (!recipeId) {
+		return res.status(400).json({ error: 'Żądanie nieprawidłowe' });
+	}
+
+	if (!score) {
+		return res.status(400).json({ error: 'Należy podać ocenę' });
+	}
+
+	const recipe = await Recipe.findById(recipeId);
+	if (!recipe) {
+		return res.status(404).json({ error: 'Brak przepisu z tym id' });
+	}
+
+	// Delete previous score if it exists
+	recipe.ratings = recipe.ratings.filter((r) => !r.author.equals(req.user._id));
+
+	recipe.ratings.push({
+		author: req.user._id,
+		score,
+		createdAt: Date(0)
+	});
+
+	// Save comment
+	await recipe.save();
+
+	return res.status(200).json(recipe);
+};
+
 module.exports = {
 	getAllRecipes,
 	getRecipe,
@@ -338,7 +373,8 @@ module.exports = {
 	getFavouriteRecipes,
 	getFilteredRecipes,
 	addComment,
-	deleteComment
+	deleteComment,
+	addRating
 };
 
 //TODO: Verify and add/remove allergy

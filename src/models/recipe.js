@@ -106,6 +106,15 @@ recipeSchema.virtual('allergies').get(function() {
 	return allergiesArray;
 });
 
+recipeSchema.virtual('averageRating').get(function() {
+	let recipe = this;
+	let average =
+		recipe.ratings.reduce(function(sum, rating) {
+			return sum + rating.score;
+		}, 0) / recipe.ratings.length;
+	return average;
+});
+
 recipeSchema.set('toObject', { virtuals: true });
 recipeSchema.set('toJSON', { virtuals: true });
 

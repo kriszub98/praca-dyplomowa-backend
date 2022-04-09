@@ -12,7 +12,8 @@ const {
 	getRecipe,
 	verifyRecipe,
 	getFavouriteRecipes,
-	getFilteredRecipes
+	getFilteredRecipes,
+	addRating
 } = require('../controllers/recipe');
 
 router.route('/').get(getAllRecipes).post(auth, addRecipe);
@@ -22,6 +23,7 @@ router.route('/verify/:id').patch(auth, verifyRecipe);
 router.route('/:id').get(getRecipe).delete(auth, deleteRecipe).patch(auth, editRecipe);
 router.route('/addComment').post(auth, addComment);
 router.route('/removeComment').post(auth, deleteComment);
+router.route('/ratings').post(auth, addRating);
 
 module.exports = router;
 
