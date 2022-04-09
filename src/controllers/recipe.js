@@ -278,6 +278,56 @@ const addToFavourite = async () => {
 	return res.status(200).json(req.user);
 };
 
+const addComment = async (req, res) => {
+	// Route is: POST /recipes/comments
+	// I get: {recipeId, content} i user z autha
+	// Comment is {content and author}
+
+	const { recipeId, content } = req.body;
+	if (!recipeId) {
+		return res.status(400).json({ error: 'Żądanie nieprawidłowe' });
+	}
+
+	if (!content) {
+		return res.status(400).json({ error: 'Treść komentarza nie może być pusta' });
+	}
+
+	const recipe = await Recipe.findById(recipeId);
+	if (!recipe) {
+		return res.status(404).json({ error: 'Brak przepisu z tym id' });
+	}
+	recipe.comments.push({
+		author: req.user._id,
+		content,
+		createdAt: Date(0)
+	});
+
+	// Save comment
+	await recipe.save();
+
+	return res.status(200).json(recipe);
+};
+
+const deleteComment = async (req, res) => {
+	// Route is: DELETE /recipes/comments
+	// I get: {recipeId, commentId}
+
+	const { recipeId, commentId } = req.body;
+	if (!recipeId || !commentId) {
+		return res.status(400).json({ error: 'Niepoprawne żądanie' });
+	}
+
+	const recipe = await Recipe.findById(recipeId);
+	if (!recipe) {
+		return res.status(404).json({ error: 'Brak przepisu z tym id' });
+	}
+
+	recipe.comments = recipe.comments.filter((c) => !c._id.equals(commentId));
+	await recipe.save();
+
+	return res.status(200).json(recipe);
+};
+
 module.exports = {
 	getAllRecipes,
 	getRecipe,
@@ -286,7 +336,9 @@ module.exports = {
 	deleteRecipe,
 	verifyRecipe,
 	getFavouriteRecipes,
-	getFilteredRecipes
+	getFilteredRecipes,
+	addComment,
+	deleteComment
 };
 
 //TODO: Verify and add/remove allergy

@@ -41,6 +41,33 @@ const recipeSchema = new mongoose.Schema(
 					required: true
 				}
 			}
+		],
+		comments: [
+			{
+				author: {
+					type: mongoose.Schema.Types.ObjectId,
+					required: true,
+					ref: 'User'
+				},
+				content: {
+					type: String,
+					required: true
+				},
+				createdAt: Date
+			}
+		],
+		ratings: [
+			{
+				author: {
+					type: mongoose.Schema.Types.ObjectId,
+					required: true,
+					ref: 'User'
+				},
+				score: {
+					type: Number,
+					required: true
+				}
+			}
 		]
 	},
 	{
