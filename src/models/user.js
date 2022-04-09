@@ -94,7 +94,7 @@ userSchema.methods.generateAuthToken = async function() {
 
 // Login Method
 userSchema.statics.findByCredentials = async (email, password) => {
-	const user = await User.findOne({ email });
+	const user = await User.findOne({ email }).populate('allergies');
 	if (!user) {
 		throw new Error('Unable to login');
 	}
@@ -116,6 +116,11 @@ userSchema.pre('save', async function(next) {
 	}
 
 	next();
+});
+
+userSchema.post('save', async function() {
+	const user = this;
+	await user.populate('allergies');
 });
 
 const User = mongoose.model('User', userSchema);

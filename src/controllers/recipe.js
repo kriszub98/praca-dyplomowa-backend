@@ -85,6 +85,88 @@ const getAllRecipes = async (req, res) => {
 	return res.status(200).json(recipes);
 };
 
+const getFilteredRecipes = async (req, res) => {
+	let { name, allergies, sort } = req.body;
+	let queryObject = {};
+
+	//Filtering
+	if (name) {
+		queryObject.name = { $regex: name, $options: 'i' };
+	}
+
+	// If query containes allergies
+	if (allergies) {
+		allergies = allergies.map((a) => mongoose.Types.ObjectId(a._id));
+
+		let result = Recipe.aggregate([
+			// Join Products and filter allergies
+			{
+				$lookup: {
+					from: 'products',
+					localField: 'products.product',
+					foreignField: '_id',
+					as: 'zlaczenie',
+					let: {
+						zlaczenie: '$zlaczenie'
+					},
+					pipeline: [
+						{
+							$match: {
+								allergies: { $nin: allergies },
+								$expr: { in: [ '$_id', '$$zlaczenie._id' ] }
+							}
+						}
+					]
+				}
+			},
+			// Remove empty records
+			{
+				$unwind: {
+					path: '$zlaczenie'
+				}
+			},
+			// Query names
+			{
+				$match: queryObject
+			}
+		]);
+
+		// Sorting
+		if (sort) {
+			const sortList = sort.split(',').join(' ');
+			result = result.sort(sortList);
+		} else {
+			result = result.sort('createdAt');
+		}
+
+		const filteredRecipes = await result;
+		let recipes = await Recipe.populate(filteredRecipes, [
+			{ path: 'products.product' },
+			{ path: 'owner', select: 'login' }
+		]);
+
+		// Add virtual fields
+		if (recipes) {
+			recipes = recipes.map((r) => new Recipe(r).toJSON());
+		}
+
+		return res.status(200).json(recipes);
+	}
+
+	let result = Recipe.find(queryObject);
+
+	// Sorting
+	if (sort) {
+		const sortList = sort.split(',').join(' ');
+		result = result.sort(sortList);
+	} else {
+		result = result.sort('createdAt');
+	}
+
+	const recipes = await result;
+	return res.status(200).json(recipes);
+};
+
 const getRecipe = async (req, res) => {
 	const recipe = await Recipe.findById(req.params.id);
 	if (!recipe) {
@@ -203,7 +285,8 @@ module.exports = {
 	editRecipe,
 	deleteRecipe,
 	verifyRecipe,
-	getFavouriteRecipes
+	getFavouriteRecipes,
+	getFilteredRecipes
 };
 
 //TODO: Verify and add/remove allergy
