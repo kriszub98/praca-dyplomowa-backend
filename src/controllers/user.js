@@ -15,6 +15,7 @@ const getUserById = async (req, res) => {
 };
 
 const register = async (req, res) => {
+	// TODO: Check if password matches
 	const user = new User(req.body);
 
 	await user.save();

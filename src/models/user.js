@@ -96,12 +96,12 @@ userSchema.methods.generateAuthToken = async function() {
 userSchema.statics.findByCredentials = async (email, password) => {
 	const user = await User.findOne({ email }).populate('allergies');
 	if (!user) {
-		throw new Error('Unable to login');
+		throw new Error('Błąd podczas logowania');
 	}
 
 	const isMatch = await bcrypt.compare(password, user.password);
 	if (!isMatch) {
-		throw new Error('Unable to login');
+		throw new Error('Błąd podczas logowania');
 	}
 
 	return user;
