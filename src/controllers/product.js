@@ -1,4 +1,6 @@
 const Product = require('../models/product');
+const sharp = require('sharp');
+const { Buffer } = require('buffer');
 
 const getAllProducts = async (req, res) => {
 	const { name, sort, fields } = req.query;
@@ -103,13 +105,57 @@ const verifyProduct = async (req, res) => {
 	return res.status(200).send({ message: 'Weryfikacja zapisana' });
 };
 
+const addPhoto = async (req, res) => {
+	const product = await Product.findById(req.params.id);
+	if (!product) {
+		return res.status(404).json({ error: 'Produkt z tym id nie istnieje' });
+	}
+
+	// TODO: Usun clg po skonczeniu
+	console.log(req.file);
+
+	const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
+	product.photo = buffer;
+	await product.save();
+	return res.status(201).json(product);
+};
+
+const addPhotoBase64 = async (req, res) => {
+	const product = await Product.findById(req.params.id);
+	if (!product) {
+		return res.status(404).json({ error: 'Produkt z tym id nie istnieje' });
+	}
+
+	let bufferPhoto = Buffer.from(req.body.photo, 'base64');
+
+	const buffer = await sharp(bufferPhoto).resize({ width: 250, height: 250 }).toBuffer();
+	product.photo = buffer;
+	await product.save();
+	return res.status(201).json(product);
+};
+
+const getPhoto = async (req, res) => {
+	try {
+		const product = await Product.findById(req.params.id);
+		if (!product || !product.photo) {
+			throw new Error();
+		}
+		res.set('Content-Type', 'image/png').send(product.photo);
+	} catch (error) {
+		res.status(404).send();
+	}
+};
+
 module.exports = {
 	getAllProducts,
 	addProduct,
 	editProduct,
 	deleteProduct,
 	getProduct,
-	verifyProduct
+	verifyProduct,
+	addPhoto,
+	addPhotoBase64,
+	getPhoto
 };
 
 //TODO: Verify and add/remove allergy

@@ -3,72 +3,11 @@ const mongoose = require('mongoose');
 
 const getAllRecipes = async (req, res) => {
 	const { name, sort } = req.query;
-	let { allergies } = req.body;
 	let queryObject = {};
 
 	//Filtering
 	if (name) {
 		queryObject.name = { $regex: name, $options: 'i' };
-	}
-
-	// If query containes allergies
-	if (allergies) {
-		allergies = allergies.map((allergyId) => {
-			return mongoose.Types.ObjectId(allergyId);
-		});
-		let result = Recipe.aggregate([
-			// Join Products and filter allergies
-			{
-				$lookup: {
-					from: 'products',
-					localField: 'products.product',
-					foreignField: '_id',
-					as: 'zlaczenie',
-					let: {
-						zlaczenie: '$zlaczenie'
-					},
-					pipeline: [
-						{
-							$match: {
-								allergies: { $nin: allergies },
-								$expr: { in: [ '$_id', '$$zlaczenie._id' ] }
-							}
-						}
-					]
-				}
-			},
-			// Remove empty records
-			{
-				$unwind: {
-					path: '$zlaczenie'
-				}
-			},
-			// Query names
-			{
-				$match: queryObject
-			}
-		]);
-
-		// Sorting
-		if (sort) {
-			const sortList = sort.split(',').join(' ');
-			result = result.sort(sortList);
-		} else {
-			result = result.sort('createdAt');
-		}
-
-		const filteredRecipes = await result;
-		let recipes = await Recipe.populate(filteredRecipes, [
-			{ path: 'products.product' },
-			{ path: 'owner', select: 'login' }
-		]);
-
-		// Add virtual fields
-		if (recipes) {
-			recipes = recipes.map((r) => new Recipe(r).toJSON());
-		}
-
-		return res.status(200).json(recipes);
 	}
 
 	let result = Recipe.find(queryObject);
@@ -89,68 +28,9 @@ const getFilteredRecipes = async (req, res) => {
 	let { name, allergies, sort } = req.body;
 	let queryObject = {};
 
-	//Filtering
+	// Filtering
 	if (name) {
 		queryObject.name = { $regex: name, $options: 'i' };
-	}
-
-	// If query containes allergies
-	if (allergies) {
-		allergies = allergies.map((a) => mongoose.Types.ObjectId(a._id));
-
-		let result = Recipe.aggregate([
-			// Join Products and filter allergies
-			{
-				$lookup: {
-					from: 'products',
-					localField: 'products.product',
-					foreignField: '_id',
-					as: 'zlaczenie',
-					let: {
-						zlaczenie: '$zlaczenie'
-					},
-					pipeline: [
-						{
-							$match: {
-								allergies: { $nin: allergies },
-								$expr: { in: [ '$_id', '$$zlaczenie._id' ] }
-							}
-						}
-					]
-				}
-			},
-			// Remove empty records
-			{
-				$unwind: {
-					path: '$zlaczenie'
-				}
-			},
-			// Query names
-			{
-				$match: queryObject
-			}
-		]);
-
-		// Sorting
-		if (sort) {
-			const sortList = sort.split(',').join(' ');
-			result = result.sort(sortList);
-		} else {
-			result = result.sort('createdAt');
-		}
-
-		const filteredRecipes = await result;
-		let recipes = await Recipe.populate(filteredRecipes, [
-			{ path: 'products.product' },
-			{ path: 'owner', select: 'login' }
-		]);
-
-		// Add virtual fields
-		if (recipes) {
-			recipes = recipes.map((r) => new Recipe(r).toJSON());
-		}
-
-		return res.status(200).json(recipes);
 	}
 
 	let result = Recipe.find(queryObject);
@@ -163,7 +43,23 @@ const getFilteredRecipes = async (req, res) => {
 		result = result.sort('createdAt');
 	}
 
-	const recipes = await result;
+	let recipes = await result;
+
+	// Filtering Allergies
+	if (allergies && allergies.length > 0 && recipes && recipes.length > 0) {
+		recipes = recipes.filter((recipe) => {
+			// Check if recipe has at least one of filtered allergies
+			let hasOneOfAllergies = recipe.allergies.some((recipeAllergy) => {
+				// Check if this recipeAllergy is inside chosenAllergies
+				let isAllergyInFilteredAllergies = allergies.some((allergy) => allergy.name === recipeAllergy.name);
+				return isAllergyInFilteredAllergies;
+			});
+
+			let canEat = !hasOneOfAllergies;
+			return canEat;
+		});
+	}
+
 	return res.status(200).json(recipes);
 };
 
