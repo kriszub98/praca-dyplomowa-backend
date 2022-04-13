@@ -111,9 +111,6 @@ const addPhoto = async (req, res) => {
 		return res.status(404).json({ error: 'Produkt z tym id nie istnieje' });
 	}
 
-	// TODO: Usun clg po skonczeniu
-	console.log(req.file);
-
 	const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
 	product.photo = buffer;
 	await product.save();

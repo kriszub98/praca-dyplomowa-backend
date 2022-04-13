@@ -1,5 +1,6 @@
 const Recipe = require('../models/recipe');
 const mongoose = require('mongoose');
+const sharp = require('sharp');
 
 const getAllRecipes = async (req, res) => {
 	const { name, sort } = req.query;
@@ -259,6 +260,47 @@ const addRating = async (req, res) => {
 	return res.status(200).json(recipe);
 };
 
+const addPhoto = async (req, res) => {
+	const recipe = await Recipe.findById(req.params.id);
+	if (!recipe) {
+		return res.status(404).json({ error: 'Przepis z tym id nie istnieje' });
+	}
+
+	const buffer = await sharp(req.file.buffer)
+		.resize({ width: 250, height: 250, fit: sharp.fit.inside })
+		.png()
+		.toBuffer();
+	recipe.photo = buffer;
+	await recipe.save();
+	return res.status(201).json(recipe);
+};
+
+const addPhotoBase64 = async (req, res) => {
+	const recipe = await Recipe.findById(req.params.id);
+	if (!recipe) {
+		return res.status(404).json({ error: 'Przepis z tym id nie istnieje' });
+	}
+
+	let bufferPhoto = Buffer.from(req.body.photo, 'base64');
+
+	const buffer = await sharp(bufferPhoto).resize({ width: 250, height: 250 }).toBuffer();
+	recipe.photo = buffer;
+	await recipe.save();
+	return res.status(201).json(recipe);
+};
+
+const getPhoto = async (req, res) => {
+	try {
+		const recipe = await Recipe.findById(req.params.id);
+		if (!recipe || !recipe.photo) {
+			throw new Error();
+		}
+		res.set('Content-Type', 'image/png').send(recipe.photo);
+	} catch (error) {
+		res.status(404).send();
+	}
+};
+
 module.exports = {
 	getAllRecipes,
 	getRecipe,
@@ -270,7 +312,10 @@ module.exports = {
 	getFilteredRecipes,
 	addComment,
 	deleteComment,
-	addRating
+	addRating,
+	getPhoto,
+	addPhoto,
+	addPhotoBase64
 };
 
 //TODO: Verify and add/remove allergy

@@ -77,17 +77,30 @@ const recipeSchema = new mongoose.Schema(
 
 recipeSchema.pre('find', function() {
 	let recipe = this;
-	recipe.populate({ path: 'products.product' }).populate({ path: 'owner', select: 'login' });
+	recipe
+		.populate({
+			path: 'products.product',
+			select: [ '_id', 'name', 'description', 'owner', 'allergies', 'createdAt', 'hasPhoto', 'id', 'validatedBy' ]
+		})
+		.populate({ path: 'owner', select: 'login' });
 });
 
 recipeSchema.pre('findOne', function() {
 	let recipe = this;
-	recipe.populate({ path: 'products.product' }).populate({ path: 'owner', select: 'login' });
+	recipe
+		.populate({
+			path: 'products.product',
+			select: [ '_id', 'name', 'description', 'owner', 'allergies', 'createdAt', 'hasPhoto', 'id', 'validatedBy' ]
+		})
+		.populate({ path: 'owner', select: 'login' });
 });
 
 recipeSchema.post('save', async function() {
 	let recipe = this;
-	await recipe.populate({ path: 'products.product' });
+	await recipe.populate({
+		path: 'products.product',
+		select: [ '_id', 'name', 'description', 'owner', 'allergies', 'createdAt', 'hasPhoto', 'id', 'validatedBy' ]
+	});
 });
 
 recipeSchema.virtual('allergies').get(function() {
@@ -114,6 +127,15 @@ recipeSchema.virtual('averageRating').get(function() {
 		}, 0) / recipe.ratings.length;
 	return average;
 });
+
+recipeSchema.methods.toJSON = function() {
+	const recipe = this;
+	const recipeObject = recipe.toObject({ virtuals: true });
+
+	delete recipeObject.photo;
+
+	return recipeObject;
+};
 
 recipeSchema.set('toObject', { virtuals: true });
 recipeSchema.set('toJSON', { virtuals: true });
