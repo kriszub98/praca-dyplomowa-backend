@@ -39,7 +39,7 @@ router.route('/verify/:id').patch(auth, verifyRecipe);
 router.route('/:id').get(getRecipe).delete(auth, deleteRecipe).patch(auth, editRecipe);
 router.route('/addComment').post(auth, addComment);
 router.route('/removeComment').post(auth, deleteComment);
-router.route('/ratings').post(auth, addRating);
+router.route('/:id/ratings').post(auth, addRating);
 router.route('/:id/photo').get(getPhoto).post(auth, upload.single('photo'), addPhoto);
 router.route('/:id/photoBase64').post(auth, addPhotoBase64);
 

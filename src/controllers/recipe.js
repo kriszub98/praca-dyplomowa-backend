@@ -226,23 +226,15 @@ const deleteComment = async (req, res) => {
 };
 
 const addRating = async (req, res) => {
-	// Route is: POST /recipes/ratings
-	// I get: {recipeId, score} i user z autha
-	// Comment is {score, author}
-	// TODO: Nie można 2 razy przez tego samego usera
-
-	const { recipeId, score } = req.body;
-	if (!recipeId) {
-		return res.status(400).json({ error: 'Żądanie nieprawidłowe' });
+	const recipe = await Recipe.findById(req.params.id);
+	if (!recipe) {
+		return res.status(404).json({ error: 'Przepis z tym id nie istnieje' });
 	}
+
+	const { score } = req.body;
 
 	if (!score) {
 		return res.status(400).json({ error: 'Należy podać ocenę' });
-	}
-
-	const recipe = await Recipe.findById(recipeId);
-	if (!recipe) {
-		return res.status(404).json({ error: 'Brak przepisu z tym id' });
 	}
 
 	// Delete previous score if it exists

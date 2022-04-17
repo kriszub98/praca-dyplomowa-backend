@@ -82,7 +82,8 @@ recipeSchema.pre('find', function() {
 			path: 'products.product',
 			select: [ '_id', 'name', 'description', 'owner', 'allergies', 'createdAt', 'hasPhoto', 'id', 'validatedBy' ]
 		})
-		.populate({ path: 'owner', select: 'login' });
+		.populate({ path: 'owner', select: 'login' })
+		.populate({ path: 'validatedBy', select: 'login' });
 });
 
 recipeSchema.pre('findOne', function() {
@@ -92,7 +93,8 @@ recipeSchema.pre('findOne', function() {
 			path: 'products.product',
 			select: [ '_id', 'name', 'description', 'owner', 'allergies', 'createdAt', 'hasPhoto', 'id', 'validatedBy' ]
 		})
-		.populate({ path: 'owner', select: 'login' });
+		.populate({ path: 'owner', select: 'login' })
+		.populate({ path: 'validatedBy', select: 'login' });
 });
 
 recipeSchema.post('save', async function() {
@@ -101,6 +103,11 @@ recipeSchema.post('save', async function() {
 		path: 'products.product',
 		select: [ '_id', 'name', 'description', 'owner', 'allergies', 'createdAt', 'hasPhoto', 'id', 'validatedBy' ]
 	});
+});
+
+recipeSchema.virtual('hasPhoto').get(function() {
+	let recipe = this;
+	return recipe.photo ? true : false;
 });
 
 recipeSchema.virtual('allergies').get(function() {
@@ -126,6 +133,12 @@ recipeSchema.virtual('averageRating').get(function() {
 			return sum + rating.score;
 		}, 0) / recipe.ratings.length;
 	return average;
+});
+
+recipeSchema.virtual('ratingVoteAmount').get(function() {
+	let recipe = this;
+	let amount = recipe.ratings.length;
+	return amount;
 });
 
 recipeSchema.methods.toJSON = function() {
