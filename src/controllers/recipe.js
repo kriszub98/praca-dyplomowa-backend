@@ -162,37 +162,41 @@ const getFavouriteRecipes = async (req, res) => {
 	return res.status(200).json(req.user);
 };
 
-const addToFavourite = async () => {
+const switchFavourite = async (req, res) => {
 	const recipe = await Recipe.findById(req.params.id);
 
 	// Check if recipe exists
 	if (!recipe) {
 		return res.status(404).json({ error: 'Brak przepisu z tym id' });
 	}
-	req.user.favouriteRecipes.push(recipe);
 
-	await req.user.save();
-	return res.status(200).json(req.user);
+	let user = req.user;
+
+	// Check if already in favorite
+	let isFavourite = user.favouriteRecipes.some((recipeId) => recipe._id.equals(recipeId));
+
+	// If in Fav remove it, else add it
+	if (isFavourite) {
+		user.favouriteRecipes = user.favouriteRecipes.filter((recipeId) => !recipe._id.equals(recipeId));
+	} else {
+		user.favouriteRecipes.push(recipe);
+	}
+
+	await user.save();
+	return res.status(200).json(user);
 };
 
 const addComment = async (req, res) => {
-	// Route is: POST /recipes/comments
-	// I get: {recipeId, content} i user z autha
-	// Comment is {content and author}
-
-	const { recipeId, content } = req.body;
-	if (!recipeId) {
-		return res.status(400).json({ error: 'Żądanie nieprawidłowe' });
+	const recipe = await Recipe.findById(req.params.id);
+	if (!recipe) {
+		return res.status(404).json({ error: 'Przepis z tym id nie istnieje' });
 	}
 
+	const { content } = req.body;
 	if (!content) {
 		return res.status(400).json({ error: 'Treść komentarza nie może być pusta' });
 	}
 
-	const recipe = await Recipe.findById(recipeId);
-	if (!recipe) {
-		return res.status(404).json({ error: 'Brak przepisu z tym id' });
-	}
 	recipe.comments.push({
 		author: req.user._id,
 		content,
@@ -305,6 +309,7 @@ module.exports = {
 	addComment,
 	deleteComment,
 	addRating,
+	switchFavourite,
 	getPhoto,
 	addPhoto,
 	addPhotoBase64

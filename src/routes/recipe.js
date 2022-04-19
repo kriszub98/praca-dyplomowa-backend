@@ -29,7 +29,8 @@ const {
 	addRating,
 	addPhoto,
 	addPhotoBase64,
-	getPhoto
+	getPhoto,
+	switchFavourite
 } = require('../controllers/recipe');
 
 router.route('/').get(getAllRecipes).post(auth, addRecipe);
@@ -37,8 +38,9 @@ router.route('/filtered').post(getFilteredRecipes);
 router.route('/favourites').get(auth, getFavouriteRecipes);
 router.route('/verify/:id').patch(auth, verifyRecipe);
 router.route('/:id').get(getRecipe).delete(auth, deleteRecipe).patch(auth, editRecipe);
-router.route('/addComment').post(auth, addComment);
-router.route('/removeComment').post(auth, deleteComment);
+router.route('/:id/comments').post(auth, addComment);
+router.route('/:id/favourite').patch(auth, switchFavourite);
+router.route('/removeComment').post(auth, deleteComment); // TODO: Change
 router.route('/:id/ratings').post(auth, addRating);
 router.route('/:id/photo').get(getPhoto).post(auth, upload.single('photo'), addPhoto);
 router.route('/:id/photoBase64').post(auth, addPhotoBase64);

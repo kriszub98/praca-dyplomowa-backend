@@ -83,7 +83,8 @@ recipeSchema.pre('find', function() {
 			select: [ '_id', 'name', 'description', 'owner', 'allergies', 'createdAt', 'hasPhoto', 'id', 'validatedBy' ]
 		})
 		.populate({ path: 'owner', select: 'login' })
-		.populate({ path: 'validatedBy', select: 'login' });
+		.populate({ path: 'validatedBy', select: 'login' })
+		.populate({ path: 'comments.author', select: 'login' });
 });
 
 recipeSchema.pre('findOne', function() {
@@ -94,15 +95,21 @@ recipeSchema.pre('findOne', function() {
 			select: [ '_id', 'name', 'description', 'owner', 'allergies', 'createdAt', 'hasPhoto', 'id', 'validatedBy' ]
 		})
 		.populate({ path: 'owner', select: 'login' })
-		.populate({ path: 'validatedBy', select: 'login' });
+		.populate({ path: 'validatedBy', select: 'login' })
+		.populate({ path: 'comments.author', select: 'login' });
 });
 
 recipeSchema.post('save', async function() {
 	let recipe = this;
-	await recipe.populate({
-		path: 'products.product',
-		select: [ '_id', 'name', 'description', 'owner', 'allergies', 'createdAt', 'hasPhoto', 'id', 'validatedBy' ]
-	});
+	await recipe.populate([
+		{
+			path: 'products.product',
+			select: [ '_id', 'name', 'description', 'owner', 'allergies', 'createdAt', 'hasPhoto', 'id', 'validatedBy' ]
+		},
+		{ path: 'owner', select: 'login' },
+		{ path: 'validatedBy', select: 'login' },
+		{ path: 'comments.author', select: 'login' }
+	]);
 });
 
 recipeSchema.virtual('hasPhoto').get(function() {
