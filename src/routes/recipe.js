@@ -30,12 +30,14 @@ const {
 	addPhoto,
 	addPhotoBase64,
 	getPhoto,
-	switchFavourite
+	switchFavourite,
+	getMyRecipes
 } = require('../controllers/recipe');
 
 router.route('/').get(getAllRecipes).post(auth, addRecipe);
 router.route('/filtered').post(getFilteredRecipes);
-router.route('/favourites').get(auth, getFavouriteRecipes);
+router.route('/myRecipes').post(auth, getMyRecipes);
+router.route('/favourites').post(auth, getFavouriteRecipes);
 router.route('/verify/:id').patch(auth, verifyRecipe);
 router.route('/:id').get(getRecipe).delete(auth, deleteRecipe).patch(auth, editRecipe);
 router.route('/:id/comments').post(auth, addComment);

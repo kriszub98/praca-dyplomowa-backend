@@ -135,9 +135,50 @@ const verifyRecipe = async (req, res) => {
 	return res.status(200).json(recipe);
 };
 
+const getMyRecipes = async (req, res) => {
+	let { name, allergies, sort } = req.body;
+	let queryObject = {};
+
+	// Filtering
+	if (name) {
+		queryObject.name = { $regex: name, $options: 'i' };
+	}
+
+	queryObject.owner = req.user;
+
+	let result = Recipe.find(queryObject);
+
+	// Sorting
+	if (sort) {
+		const sortList = sort.split(',').join(' ');
+		result = result.sort(sortList);
+	} else {
+		result = result.sort('createdAt');
+	}
+
+	let recipes = await result;
+
+	// Filtering Allergies
+	if (allergies && allergies.length > 0 && recipes && recipes.length > 0) {
+		recipes = recipes.filter((recipe) => {
+			// Check if recipe has at least one of filtered allergies
+			let hasOneOfAllergies = recipe.allergies.some((recipeAllergy) => {
+				// Check if this recipeAllergy is inside chosenAllergies
+				let isAllergyInFilteredAllergies = allergies.some((allergy) => allergy.name === recipeAllergy.name);
+				return isAllergyInFilteredAllergies;
+			});
+
+			let canEat = !hasOneOfAllergies;
+			return canEat;
+		});
+	}
+
+	return res.status(200).json(recipes);
+};
+
 // Favourites
 const getFavouriteRecipes = async (req, res) => {
-	const { name, sort } = req.query;
+	const { name, sort } = req.body;
 	let sortList = '';
 	let queryObject = {};
 
@@ -312,7 +353,8 @@ module.exports = {
 	switchFavourite,
 	getPhoto,
 	addPhoto,
-	addPhotoBase64
+	addPhotoBase64,
+	getMyRecipes
 };
 
 //TODO: Verify and add/remove allergy

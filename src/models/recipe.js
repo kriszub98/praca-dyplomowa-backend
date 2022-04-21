@@ -122,12 +122,14 @@ recipeSchema.virtual('allergies').get(function() {
 	let productsArray = this.products;
 
 	productsArray.forEach(({ product }) => {
-		product.allergies.forEach((allergy) => {
-			// Check if Allergy is already in Array
-			if (!allergiesArray.some((a) => a._id === allergy._id)) {
-				return allergiesArray.push(allergy);
-			}
-		});
+		if (product.allergies) {
+			product.allergies.forEach((allergy) => {
+				// Check if Allergy is already in Array
+				if (!allergiesArray.some((a) => a._id === allergy._id)) {
+					return allergiesArray.push(allergy);
+				}
+			});
+		}
 	});
 
 	return allergiesArray;
