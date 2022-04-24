@@ -29,8 +29,8 @@ const {
 } = require('../controllers/product');
 
 router.route('/').get(getAllProducts).post(auth, addProduct);
-router.route('/verify/:id').patch(auth, verifyProduct);
 router.route('/:id').get(getProduct).delete(auth, deleteProduct).patch(auth, editProduct);
+router.route('/:id/verify').patch(auth, verifyProduct);
 router.route('/:id/photo').get(getPhoto).post(auth, upload.single('photo'), addPhoto);
 router.route('/:id/photoBase64').post(auth, addPhotoBase64);
 

@@ -3,13 +3,20 @@ const sharp = require('sharp');
 const { Buffer } = require('buffer');
 
 const getAllProducts = async (req, res) => {
-	const { name, sort, fields } = req.query;
+	const { name, validated, sort, fields } = req.query;
 	let queryObject = {};
 
 	// Filtering
 	if (name) {
 		queryObject.name = { $regex: name, $options: 'i' };
 	}
+
+	if (validated === 'true') {
+		queryObject.validatedBy = { $ne: undefined };
+	} else if (validated === 'false') {
+		queryObject.validatedBy = undefined;
+	}
+
 	let result = Product.find(queryObject);
 
 	// Sorting
@@ -40,7 +47,7 @@ const addProduct = async (req, res) => {
 const editProduct = async (req, res) => {
 	// Validate updating fields
 	const updates = Object.keys(req.body);
-	const allowedUpdates = [ 'name', 'description', 'photo' ];
+	const allowedUpdates = [ 'name', 'description', 'photo', 'allergies' ];
 	const isValidUpdate = updates.every((update) => allowedUpdates.includes(update));
 
 	if (!isValidUpdate) return res.status(400).json({ error: 'Podano niepoprawne dane' });
@@ -88,6 +95,7 @@ const getProduct = async (req, res) => {
 };
 
 const verifyProduct = async (req, res) => {
+	const { allergies } = req.body;
 	const product = await Product.findById(req.params.id);
 
 	// Check if product exists
@@ -99,6 +107,9 @@ const verifyProduct = async (req, res) => {
 	// Check if user is permited to verify product
 
 	// Verify the product
+	if (allergies) {
+		product.allergies = allergies;
+	}
 	product.validatedBy = req.user;
 	await product.save();
 
