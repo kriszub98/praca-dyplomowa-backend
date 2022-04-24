@@ -3,12 +3,18 @@ const mongoose = require('mongoose');
 const sharp = require('sharp');
 
 const getAllRecipes = async (req, res) => {
-	const { name, sort } = req.query;
+	const { name, sort, validated } = req.query;
 	let queryObject = {};
 
 	//Filtering
 	if (name) {
 		queryObject.name = { $regex: name, $options: 'i' };
+	}
+
+	if (validated === 'true') {
+		queryObject.validatedBy = { $ne: undefined };
+	} else if (validated === 'false') {
+		queryObject.validatedBy = undefined;
 	}
 
 	let result = Recipe.find(queryObject);

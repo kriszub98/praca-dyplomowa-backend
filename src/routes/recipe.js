@@ -38,7 +38,7 @@ router.route('/').get(getAllRecipes).post(auth, addRecipe);
 router.route('/filtered').post(getFilteredRecipes);
 router.route('/myRecipes').post(auth, getMyRecipes);
 router.route('/favourites').post(auth, getFavouriteRecipes);
-router.route('/verify/:id').patch(auth, verifyRecipe);
+router.route('/:id/verify').patch(auth, verifyRecipe);
 router.route('/:id').get(getRecipe).delete(auth, deleteRecipe).patch(auth, editRecipe);
 router.route('/:id/comments').post(auth, addComment);
 router.route('/:id/favourite').patch(auth, switchFavourite);
