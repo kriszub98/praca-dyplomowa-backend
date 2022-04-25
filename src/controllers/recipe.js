@@ -257,20 +257,17 @@ const addComment = async (req, res) => {
 };
 
 const deleteComment = async (req, res) => {
-	// Route is: DELETE /recipes/comments
-	// I get: {recipeId, commentId}
-
-	const { recipeId, commentId } = req.body;
-	if (!recipeId || !commentId) {
+	const { comment } = req.body;
+	if (!comment) {
 		return res.status(400).json({ error: 'Niepoprawne żądanie' });
 	}
 
-	const recipe = await Recipe.findById(recipeId);
+	const recipe = await Recipe.findById(req.params.id);
 	if (!recipe) {
-		return res.status(404).json({ error: 'Brak przepisu z tym id' });
+		return res.status(404).json({ error: 'Przepis z tym id nie istnieje' });
 	}
 
-	recipe.comments = recipe.comments.filter((c) => !c._id.equals(commentId));
+	recipe.comments = recipe.comments.filter((c) => !c._id.equals(comment._id));
 	await recipe.save();
 
 	return res.status(200).json(recipe);
